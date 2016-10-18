@@ -47,14 +47,15 @@ build_image () {
         # Replace the FROM line to point to our image in gcr.io.
         sed -i -e "s|FROM php-nginx|FROM ${BASE_IMAGE}|" "${SRC_DIR}/Dockerfile"
         gcloud -q alpha container builds create "${SRC_DIR}" --tag "${FULL_TAG}"
-        gcloud docker -- pull "${FULL_TAG}"
-        docker tag "${FULL_TAG}" "${IMAGE}"
+        gcloud docker pull "${FULL_TAG}"
+        docker tag -f "${FULL_TAG}" "${IMAGE}"
     else
         # No credentials. Use local docker.
         docker build -t "${IMAGE}" "${DIR}"
     fi
 }
 
+build_image php-base php-base
 build_image php-nginx php-nginx
 build_image php56 testapps/php56
 build_image php56_custom  testapps/php56_custom
